@@ -1,0 +1,30 @@
+#!/bin/bash
+
+# license:
+# GNU GENERAL PUBLIC LICENSE Version 3
+
+# place this script into /etc/kernel/postrm.d/
+# this will remove the kernel from systemd-boot
+
+echo "kernel/postrm: to remove: ${1}"
+
+# get the machineid
+machineid=$(cat /etc/machine-id)
+# declare entry to remove
+item2remove=/boot/efi/${machineid}/${1}
+
+echo ${item2remove}
+# ensure the kernel is installed in systemd-boot
+if [ -d ${item2remove} ];
+then
+    # ensure the kernel is removed
+    if [ ! -f "/boot/vmlinuz-${1}" ];
+    then
+        kernel-install remove ${1}
+        echo "... was removed"
+    else
+        echo "... not removed, kernel ${1} was not removed"
+    fi
+else
+    echo "... not found in systemd-boot menu, nothing todo"
+fi

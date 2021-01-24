@@ -1,0 +1,21 @@
+#!/bin/bash
+
+# license:
+# GNU GENERAL PUBLIC LICENSE Version 3
+
+# script for inital setup from systemd-boot
+# after install goto bios/uefi and select linux bootloader
+
+efi_dir="/boot/efi"
+if [ ! -d ${efi_dir} ]; then echo "${efi_dir} not found" && exit 1;fi
+
+echo "installing systemd-boot"
+bootctl --esp-path=${efi_dir} install
+if [[ $? -ne 0 ]]; then echo "ERROR on installing systemd-boot, exiting" && exit 1; fi
+
+echo "setting current kernel to systemd-boot"
+kernel-install -v add $(uname -r) /boot/vmlinuz-$(uname -r) 
+if [[ $? -ne 0 ]]; then echo "ERROR on installing kernel, exiting" && exit 1; fi
+
+echo "finished"
+echo "for reboot into bios call <systemctl reboot --firmware-setup>"

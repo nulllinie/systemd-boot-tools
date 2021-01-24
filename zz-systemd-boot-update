@@ -1,0 +1,14 @@
+#!/bin/bash
+
+# written for ubuntu
+# tested on ubuntu 20.04 LTS
+# place this script into /etc/kernel/postinst.d/
+# this will install the kerel into systemd-boot
+# if the kernel is already installed it will be overwritten
+
+echo "systemd-boot EFI update"
+
+echo "Kernelversion: ${1}"
+echo "install kernel from ${2} ..."
+kernel-install -v add $1 /boot/vmlinuz-$1
+
